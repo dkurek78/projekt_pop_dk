@@ -8,8 +8,8 @@ root.geometry("1400x800")
 root.title("System zarządzania siecią telewizyjną")
 
 
-map_widget = tkintermapview.TkinterMapView(root, width=1400, height=400, corner_radius=5)
-map_widget.grid(row=4, column=0, columnspan=3, padx=10, pady=10)
+map_widget = tkintermapview.TkinterMapView(root, width=1000, height=400, corner_radius=5)
+map_widget.grid(row=4, column=0, columnspan=3, pady=10)
 map_widget.set_position(52.23, 21.0)
 map_widget.set_zoom(6)
 
@@ -106,7 +106,7 @@ def edit_entity():
         i = listbox.curselection()[0]
         entity = entities[i]
 
-        selected_type.set(entity.category)  # ← DODAJ TO
+        selected_type.set(entity.category)
 
         entry_name.delete(0, END)
         entry_name.insert(0, entity.name)
@@ -129,10 +129,10 @@ def update_entity(i):
     category = selected_type.get()
     extra = entry_extra.get() if category in ["Pracownik", "Widz"] else None
 
-    entities[i].marker.delete()  # stary marker znika
+    entities[i].marker.delete()
 
     new_entity = NetworkTV(name, location, category, extra)
-    entities[i] = new_entity  # podmiana obiektu
+    entities[i] = new_entity
 
     entry_name.delete(0, END)
     entry_location.delete(0, END)
@@ -141,25 +141,25 @@ def update_entity(i):
 
     button_add.config(text="Dodaj", command=add_entity)
 
-    show_entities()  # ← to powoduje odświeżenie listy — musi być TU!
+    show_entities()
 
 
 
 
 button_add = Button(root, text="Dodaj", command=add_entity)
-button_add.grid(row=1, column=1, padx=10)
+button_add.grid(row=1, column=1)
 
 button_remove = Button(root, text="Usuń", command=remove_entity)
-button_remove.grid(row=2, column=1, padx=10)
+button_remove.grid(row=2, column=1)
 
 button_edit = Button(root, text="Edytuj", command=edit_entity)
-button_edit.grid(row=3, column=1, padx=10)
+button_edit.grid(row=3, column=1, padx=100)
 
 
 
 
-listbox = Listbox(root, width=80)
-listbox.grid(row=5, column=0, columnspan=3, pady=10)
+listbox = Listbox(root, width=80, height=25)
+listbox.grid(row=4, column=3, columnspan=1)
 
 
 def show_all_on_map():
@@ -188,7 +188,7 @@ def show_employees_for_network():
         target_network = selected_entity.name
         map_widget.delete_all_marker()
         listbox.delete(0, END)
-        map_widget.set_zoom(5)
+        map_widget.set_zoom(6)
 
         for entity in entities:
             if entity.category == "Pracownik" and entity.extra == target_network:
@@ -224,13 +224,15 @@ def show_viewers_for_network():
 
 
 
-Label(root, text="Generuj mapy:").grid(row=6, column=0, sticky=W, pady=5)
-Button(root, text="Wszystkie obiekty", command=show_all_on_map).grid(row=6, column=1)
-Button(root, text="Tylko sieci", command=lambda: show_by_type("Sieć")).grid(row=7, column=0)
-Button(root, text="Tylko pracownicy", command=lambda: show_by_type("Pracownik")).grid(row=7, column=1)
-Button(root, text="Tylko widzowie", command=lambda: show_by_type("Widz")).grid(row=7, column=2)
-Button(root, text="Pracownicy danej sieci", command=show_employees_for_network).grid(row=9, column=0, columnspan=3, pady=5)
-Button(root, text="Widzowie danej sieci", command=show_viewers_for_network).grid(row=9, column=1, columnspan=3, pady=5)
+Label(root, text="Generuj mapy:").grid(row=5, column=0, sticky=W, pady=10, padx=20)
+
+Button(root, text="Wszystkie obiekty", command=show_all_on_map).grid(row=6, column=0, sticky=W, padx=20)
+Button(root, text="Tylko sieci", command=lambda: show_by_type("Sieć")).grid(row=7, column=0, sticky=W, padx=20)
+Button(root, text="Tylko pracownicy", command=lambda: show_by_type("Pracownik")).grid(row=8, column=0, sticky=W, padx=20)
+Button(root, text="Tylko widzowie", command=lambda: show_by_type("Widz")).grid(row=9, column=0, sticky=W, padx=20)
+Button(root, text="Pracownicy danej sieci", command=show_employees_for_network).grid(row=10, column=0, sticky=W, padx=20)
+Button(root, text="Widzowie danej sieci", command=show_viewers_for_network).grid(row=11, column=0, sticky=W, padx=20)
+
 
 
 root.mainloop()
