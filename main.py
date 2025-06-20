@@ -1,5 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
+from tkinter import *
+import tkintermapview
 
 
 
@@ -59,3 +61,19 @@ def list_entities(category):
         if entity.category == "Widz" and entity.extra:
             info += f" → {entity.extra}"
         print(info)
+
+root = Tk()
+root.geometry("1400x800")
+root.title("System zarządzania siecią telewizyjną")
+
+# Mapa (na górze)
+map_widget = tkintermapview.TkinterMapView(root, width=1400, height=400, corner_radius=5)
+map_widget.grid(row=0, column=0, columnspan=3, padx=10, pady=10)
+map_widget.set_position(52.23, 21.0)
+map_widget.set_zoom(6)
+
+# Lista (na dole)
+listbox = Listbox(root, width=80)
+listbox.grid(row=1, column=0, columnspan=3, padx=10, pady=10)
+
+root.mainloop()
