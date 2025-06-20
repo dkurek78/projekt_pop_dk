@@ -77,13 +77,17 @@ def add_entity():
     show_entities()
 
 
-def show_entities():
+
+
+def show_entities(category_filter=None):
     listbox.delete(0, END)
     for idx, entity in enumerate(entities):
-        display = f"{idx + 1}. {entity.name} ({entity.location})"
-        if entity.category == "Widz" and entity.extra:
-            display += f" → {entity.extra}"
-        listbox.insert(END, display)
+        if category_filter is None or entity.category == category_filter:
+            display = f"{idx + 1}. {entity.name} ({entity.location})"
+            if entity.category == "Widz" and entity.extra:
+                display += f" → {entity.extra}"
+            listbox.insert(END, display)
+
 
 
 def remove_entity():
@@ -158,16 +162,49 @@ listbox = Listbox(root, width=80)
 listbox.grid(row=5, column=0, columnspan=3, pady=10)
 
 
+def show_all_on_map():
+    map_widget.delete_all_marker()
+    map_widget.set_zoom(4)
+    for entity in entities:
+        map_widget.set_marker(entity.coordinates[0], entity.coordinates[1], text=f"{entity.name} ({entity.category})")
+    show_entities()
 
+def show_by_type(category):
+    map_widget.delete_all_marker()
+    map_widget.set_zoom(5)
+    for entity in entities:
+        if entity.category == category:
+            map_widget.set_marker(entity.coordinates[0], entity.coordinates[1], text=f"{entity.name} ({entity.category})")
+    show_entities(category_filter=category)
+
+def show_for_network():
+    try:
+        i = listbox.curselection()[0]
+        selected_entity = entities[i]
+        if selected_entity.category != "Sieć":
+            print("Zaznacz najpierw obiekt typu Sieć.")
+            return
+
+        target_network = selected_entity.name
+
+        map_widget.delete_all_marker()
+        map_widget.set_zoom(5)
+
+        for entity in entities:
+            if entity.extra == target_network:
+                map_widget.set_marker(entity.coordinates[0], entity.coordinates[1], text=f"{entity.name} ({entity.category})")
+
+    except IndexError:
+        print("Nie zaznaczono żadnej sieci.")
 
 
 
 Label(root, text="Generuj mapy:").grid(row=6, column=0, sticky=W, pady=5)
-Button(root, text="Wszystkie obiekty").grid(row=6, column=1)
-Button(root, text="Tylko sieci").grid(row=7, column=0)
-Button(root, text="Tylko pracownicy").grid(row=7, column=1)
-Button(root, text="Tylko widzowie").grid(row=7, column=2)
-Button(root, text="Widzowie i pracownicy danej sieci").grid(row=8, column=0, columnspan=3, pady=5)
+Button(root, text="Wszystkie obiekty", command=show_all_on_map).grid(row=6, column=1)
+Button(root, text="Tylko sieci", command=lambda: show_by_type("Sieć")).grid(row=7, column=0)
+Button(root, text="Tylko pracownicy", command=lambda: show_by_type("Pracownik")).grid(row=7, column=1)
+Button(root, text="Tylko widzowie", command=lambda: show_by_type("Widz")).grid(row=7, column=2)
+Button(root, text="Widzowie i pracownicy danej sieci", command=show_for_network).grid(row=8, column=0, columnspan=3, pady=5)
 
 
 root.mainloop()
