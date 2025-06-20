@@ -143,13 +143,13 @@ def update_entity(i):
 
 
 button_add = Button(root, text="Dodaj", command=add_entity)
-button_add.grid(row=1, column=2, padx=10)
+button_add.grid(row=1, column=1, padx=10)
 
 button_remove = Button(root, text="Usuń", command=remove_entity)
-button_remove.grid(row=2, column=2, padx=10)
+button_remove.grid(row=2, column=1, padx=10)
 
 button_edit = Button(root, text="Edytuj", command=edit_entity)
-button_edit.grid(row=3, column=2, padx=10)
+button_edit.grid(row=3, column=1, padx=10)
 
 
 
@@ -159,6 +159,15 @@ listbox.grid(row=5, column=0, columnspan=3, pady=10)
 
 
 
+
+
+
+Label(root, text="Generuj mapy:").grid(row=6, column=0, sticky=W, pady=5)
+Button(root, text="Wszystkie obiekty").grid(row=6, column=1)
+Button(root, text="Tylko sieci").grid(row=7, column=0)
+Button(root, text="Tylko pracownicy").grid(row=7, column=1)
+Button(root, text="Tylko widzowie").grid(row=7, column=2)
+Button(root, text="Widzowie i pracownicy danej sieci").grid(row=8, column=0, columnspan=3, pady=5)
 
 
 root.mainloop()
