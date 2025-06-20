@@ -3,6 +3,15 @@ from bs4 import BeautifulSoup
 from tkinter import *
 import tkintermapview
 
+root = Tk()
+root.geometry("1400x800")
+root.title("System zarządzania siecią telewizyjną")
+
+
+map_widget = tkintermapview.TkinterMapView(root, width=1400, height=400, corner_radius=5)
+map_widget.grid(row=4, column=0, columnspan=3, padx=10, pady=10)
+map_widget.set_position(52.23, 21.0)
+map_widget.set_zoom(6)
 
 class NetworkTV:
     def __init__(self, name, location, category, extra=None):
@@ -28,15 +37,6 @@ employees = []
 viewers = []
 
 
-root = Tk()
-root.geometry("1400x800")
-root.title("System zarządzania siecią telewizyjną")
-
-
-map_widget = tkintermapview.TkinterMapView(root, width=1400, height=400, corner_radius=5)
-map_widget.grid(row=4, column=0, columnspan=3, padx=10, pady=10)
-map_widget.set_position(52.23, 21.0)
-map_widget.set_zoom(6)
 
 
 Label(root, text="Typ obiektu:").grid(row=0, column=0, sticky=W)
@@ -177,7 +177,7 @@ def show_by_type(category):
             map_widget.set_marker(entity.coordinates[0], entity.coordinates[1], text=f"{entity.name} ({entity.category})")
     show_entities(category_filter=category)
 
-def show_for_network():
+def show_employees_for_network():
     try:
         i = listbox.curselection()[0]
         selected_entity = entities[i]
@@ -186,13 +186,38 @@ def show_for_network():
             return
 
         target_network = selected_entity.name
-
         map_widget.delete_all_marker()
+        listbox.delete(0, END)
         map_widget.set_zoom(5)
 
         for entity in entities:
-            if entity.extra == target_network:
-                map_widget.set_marker(entity.coordinates[0], entity.coordinates[1], text=f"{entity.name} ({entity.category})")
+            if entity.category == "Pracownik" and entity.extra == target_network:
+                map_widget.set_marker(entity.coordinates[0], entity.coordinates[1],
+                                      text=f"{entity.name} (Pracownik)")
+                listbox.insert(END, f"{entity.name} ({entity.location}) → {entity.extra}")
+
+    except IndexError:
+        print("Nie zaznaczono żadnej sieci.")
+
+
+def show_viewers_for_network():
+    try:
+        i = listbox.curselection()[0]
+        selected_entity = entities[i]
+        if selected_entity.category != "Sieć":
+            print("Zaznacz najpierw obiekt typu Sieć.")
+            return
+
+        target_network = selected_entity.name
+        map_widget.delete_all_marker()
+        listbox.delete(0, END)
+        map_widget.set_zoom(5)
+
+        for entity in entities:
+            if entity.category == "Widz" and entity.extra == target_network:
+                map_widget.set_marker(entity.coordinates[0], entity.coordinates[1],
+                                      text=f"{entity.name} (Widz)")
+                listbox.insert(END, f"{entity.name} ({entity.location}) → {entity.extra}")
 
     except IndexError:
         print("Nie zaznaczono żadnej sieci.")
@@ -204,7 +229,8 @@ Button(root, text="Wszystkie obiekty", command=show_all_on_map).grid(row=6, colu
 Button(root, text="Tylko sieci", command=lambda: show_by_type("Sieć")).grid(row=7, column=0)
 Button(root, text="Tylko pracownicy", command=lambda: show_by_type("Pracownik")).grid(row=7, column=1)
 Button(root, text="Tylko widzowie", command=lambda: show_by_type("Widz")).grid(row=7, column=2)
-Button(root, text="Widzowie i pracownicy danej sieci", command=show_for_network).grid(row=8, column=0, columnspan=3, pady=5)
+Button(root, text="Pracownicy danej sieci", command=show_employees_for_network).grid(row=9, column=0, columnspan=3, pady=5)
+Button(root, text="Widzowie danej sieci", command=show_viewers_for_network).grid(row=9, column=1, columnspan=3, pady=5)
 
 
 root.mainloop()
