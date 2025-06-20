@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
+
 class NetworkTV:
     def __init__(self, name, location, category, extra=None):
         self.name = name
@@ -19,9 +20,11 @@ class NetworkTV:
         return [lat, lon]
 
 
+
 networks = []
 employees = []
 viewers = []
+
 
 
 def get_current_list(category):
@@ -33,10 +36,26 @@ def get_current_list(category):
         return viewers
     return None
 
+
+
+def add_entity(name, location, category, extra=None):
+    entity = NetworkTV(name, location, category, extra)
+    get_current_list(category).append(entity)
+
+def delete_entity(category, index):
+    lst = get_current_list(category)
+    if 0 <= index < len(lst):
+        lst.pop(index)
+
+def update_entity(category, index, name, location, extra=None):
+    lst = get_current_list(category)
+    if 0 <= index < len(lst):
+        lst[index] = NetworkTV(name, location, category, extra)
+
 def list_entities(category):
     lst = get_current_list(category)
-    for i, network_tv in enumerate(lst, start=1):
-        info = f"{i}. {network_tv.name} ({network_tv.location})"
-        if network_tv.category == "Widz" and network_tv.extra:
-            info += f" → {network_tv.extra}"
+    for i, entity in enumerate(lst, start=1):
+        info = f"{i}. {entity.name} ({entity.location})"
+        if entity.category == "Widz" and entity.extra:
+            info += f" → {entity.extra}"
         print(info)
